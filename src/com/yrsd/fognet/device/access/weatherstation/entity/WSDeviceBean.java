@@ -10,6 +10,7 @@ import java.util.Date;
 public class WSDeviceBean implements Serializable {
 
     private String DeviceId;
+    private String DeviceType;
     private String DeviceName;
     private String DeviceAddr;
 
@@ -32,6 +33,13 @@ public class WSDeviceBean implements Serializable {
 
     private Date CreateDate;
 
+    public String getDeviceType() {
+        return DeviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        DeviceType = deviceType;
+    }
 
     public String getDeviceId() {
         return DeviceId;
