@@ -32,6 +32,7 @@ public class MongoDB_WSLink {
     private static MongoCollection wsDeviceCollection = null;
 
     public static void start() {
+        System.out.println("weather station mongodb link start...");
         if (mongoClient == null) {
             mongoClient = new MongoClient(host, port);
             mongoDatabase = mongoClient.getDatabase(databaseName);
@@ -41,6 +42,16 @@ public class MongoDB_WSLink {
             wsRecordCollection.createIndex(new Document("DeviceId", 1));
             wsDeviceCollection.createIndex(new Document("DeviceId", 1));
         }
+    }
+
+    public static void stop() {
+        System.out.println("weather station mongodb link stop...");
+
+        if (mongoClient != null) {
+            mongoClient.close();
+            mongoClient = null;
+        }
+
     }
 
     public static void insert(WSRecordBean bean) {
@@ -66,6 +77,9 @@ public class MongoDB_WSLink {
 
     public static MongoCursor<Document> find(WSDeviceBean bean) {
 
+
+        wsDeviceCollection.find(new Document("",""));
+
         try {
             Document dbObject = bean2DBObject(bean);
             FindIterable<Document> findIterable = wsDeviceCollection.find(dbObject);
@@ -78,6 +92,9 @@ public class MongoDB_WSLink {
             e.printStackTrace();
             return null;
         }
+
+
+
     }
 
     public static void update(WSDeviceBean bean) {
