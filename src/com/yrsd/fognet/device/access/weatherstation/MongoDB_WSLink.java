@@ -9,6 +9,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.yrsd.fognet.device.access.user.entity.UserInfoBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSDeviceBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSRecordBean;
 import org.bson.Document;
@@ -24,12 +25,14 @@ public class MongoDB_WSLink {
     private static String databaseName = "yurunsddb";
     private static String recordCollectionName = "wsRecord";
     private static String deviceCollectionName = "wsDevice";
-
+    private static String userInfoCollectionName = "userInfo";
 
     private static MongoDatabase mongoDatabase = null;
     private static MongoClient mongoClient = null;
     private static MongoCollection wsRecordCollection = null;
     private static MongoCollection wsDeviceCollection = null;
+    private static MongoCollection useInfoCollection = null;
+
 
     public static void start() {
         System.out.println("weather station mongodb link start...");
@@ -38,9 +41,12 @@ public class MongoDB_WSLink {
             mongoDatabase = mongoClient.getDatabase(databaseName);
             wsRecordCollection = mongoDatabase.getCollection(recordCollectionName);
             wsDeviceCollection = mongoDatabase.getCollection(deviceCollectionName);
+            useInfoCollection = mongoDatabase.getCollection(userInfoCollectionName);
 
             wsRecordCollection.createIndex(new Document("DeviceId", 1));
             wsDeviceCollection.createIndex(new Document("DeviceId", 1));
+            useInfoCollection.createIndex(new Document("LoginName", 1));
+
         }
     }
 
@@ -75,10 +81,18 @@ public class MongoDB_WSLink {
         }
     }
 
+    public static void insert(UserInfoBean bean) {
+
+        try {
+            Document dbObject = bean2DBObject(bean);
+            useInfoCollection.insertOne(dbObject);
+            System.out.println("insert " + dbObject.toJson());
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+
     public static MongoCursor<Document> find(WSDeviceBean bean) {
-
-
-        wsDeviceCollection.find(new Document("",""));
 
         try {
             Document dbObject = bean2DBObject(bean);
@@ -92,9 +106,22 @@ public class MongoDB_WSLink {
             e.printStackTrace();
             return null;
         }
+    }
 
+    public static MongoCursor<Document> find(UserInfoBean bean) {
 
-
+        try {
+            Document dbObject = bean2DBObject(bean);
+            FindIterable<Document> findIterable = wsDeviceCollection.find(dbObject);
+            return findIterable.iterator();
+//            MongoCursor<Document> mongoCursor = findIterable.iterator();
+//            while (mongoCursor.hasNext()) {
+//                System.out.println(mongoCursor.next());
+//            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static void update(WSDeviceBean bean) {

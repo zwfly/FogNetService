@@ -15,5 +15,43 @@ public class UserInfoBean {
 
     private List<UserOwnDeviceBean> OwnDevicelist;
 
+    public String getUserId() {
+        return UserId;
+    }
 
+    public void setUserId(String userId) {
+        UserId = userId;
+    }
+
+    public String getUserName() {
+        return UserName;
+    }
+
+    public void setUserName(String userName) {
+        UserName = userName;
+    }
+
+    public String getLoginName() {
+        return LoginName;
+    }
+
+    public void setLoginName(String loginName) {
+        LoginName = loginName;
+    }
+
+    public String getLoginPassword() {
+        return LoginPassword;
+    }
+
+    public void setLoginPassword(String loginPassword) {
+        LoginPassword = loginPassword;
+    }
+
+    public List<UserOwnDeviceBean> getOwnDevicelist() {
+        return OwnDevicelist;
+    }
+
+    public void setOwnDevicelist(List<UserOwnDeviceBean> ownDevicelist) {
+        OwnDevicelist = ownDevicelist;
+    }
 }
