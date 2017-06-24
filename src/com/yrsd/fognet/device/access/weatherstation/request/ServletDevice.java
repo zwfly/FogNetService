@@ -25,10 +25,9 @@ public class ServletDevice extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
 
-        System.out.println("doPost");
-        System.out.println(request.getRequestURL() + ", " + request.getParameter("age"));
-        System.out.println(request.getHeaderNames());
-        System.out.println(request.getQueryString());
+        System.out.println("ServletDevice doPost");
+
+
 
 
         response.getWriter().println("123qweqweqwe");
@@ -36,11 +35,8 @@ public class ServletDevice extends HttpServlet {
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("doget");
+        System.out.println("ServletDevice doget");
 
-        System.out.println(request.getRequestURL() + ", " + request.getHeader("name"));
-        System.out.println(request.getHeaderNames());
-        System.out.println(request.getQueryString());
 
 
         response.getWriter().println("123qweqweqwe");

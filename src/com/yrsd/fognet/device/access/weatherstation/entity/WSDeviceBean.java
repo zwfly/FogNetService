@@ -7,12 +7,16 @@ import java.util.Date;
  * 气象站设备管理
  * Created by admin on 2017/6/15.
  */
-public class WSDeviceBean implements Serializable {
+public class WSDeviceBean extends WSBaseBean implements Serializable {
 
     private String DeviceId;
     private String DeviceType;
     private String DeviceName;
     private String DeviceAddr;
+
+    private Float Longitude;   //经度
+    private Float latitude;    //纬度
+    private Integer altitude;    //海拔
 
     private Integer TemperatureAlarmUpper;
     private Integer TemperatureAlarmLower;
@@ -31,7 +35,55 @@ public class WSDeviceBean implements Serializable {
     private Date LastOnLineDate;
     private Date LastOffLineDate;
 
-    private Date CreateDate;
+    private Date DeviceCreateDate;
+
+
+    @Override
+    public String toString() {
+        return "WSDeviceBean{" +
+                "DeviceId='" + DeviceId + '\'' +
+                ", DeviceType='" + DeviceType + '\'' +
+                ", DeviceName='" + DeviceName + '\'' +
+                ", DeviceAddr='" + DeviceAddr + '\'' +
+                ", TemperatureAlarmUpper=" + TemperatureAlarmUpper +
+                ", TemperatureAlarmLower=" + TemperatureAlarmLower +
+                ", TemperatureAlarmEnable=" + TemperatureAlarmEnable +
+                ", HumidityAlarmUpper=" + HumidityAlarmUpper +
+                ", HumidityAlarmLower=" + HumidityAlarmLower +
+                ", HumidityAlarmEnable=" + HumidityAlarmEnable +
+                ", PM2d5AlarmUpper=" + PM2d5AlarmUpper +
+                ", PM2d5AlarmLower=" + PM2d5AlarmLower +
+                ", PM2d5AlarmEnable=" + PM2d5AlarmEnable +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", LastOnLineDate=" + LastOnLineDate +
+                ", LastOffLineDate=" + LastOffLineDate +
+                ", DeviceCreateDate=" + DeviceCreateDate +
+                '}';
+    }
+
+    public Float getLongitude() {
+        return Longitude;
+    }
+
+    public void setLongitude(Float longitude) {
+        Longitude = longitude;
+    }
+
+    public Float getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Float latitude) {
+        this.latitude = latitude;
+    }
+
+    public Integer getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(Integer altitude) {
+        this.altitude = altitude;
+    }
 
     public String getDeviceType() {
         return DeviceType;
@@ -161,11 +213,11 @@ public class WSDeviceBean implements Serializable {
         LastOffLineDate = lastOffLineDate;
     }
 
-    public Date getCreateDate() {
-        return CreateDate;
+    public Date getDeviceCreateDate() {
+        return DeviceCreateDate;
     }
 
-    public void setCreateDate(Date createDate) {
-        CreateDate = createDate;
+    public void setDeviceCreateDate(Date deviceCreateDate) {
+        DeviceCreateDate = deviceCreateDate;
     }
 }

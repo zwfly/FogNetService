@@ -1,6 +1,12 @@
 package com.yrsd.fognet;
 
+import com.google.gson.Gson;
+import com.mongodb.client.MongoCursor;
+import com.yrsd.fognet.device.access.user.entity.UserInfoBean;
+import com.yrsd.fognet.device.access.weatherstation.MongoDB_WSLink;
+import com.yrsd.fognet.device.access.weatherstation.entity.WSDeviceBean;
 import org.apache.commons.lang3.StringUtils;
+import org.bson.Document;
 
 /**
  * Created by admin on 2017/6/23.
@@ -9,36 +15,32 @@ public class TestMain2 {
 
     public static void main(String[] args) {
 
-        String msg1 = null;
-        String msg2 = null;
 
-//        boolean b = StringUtils.isEmpty(msg1) || StringUtils.isEmpty(msg2);
-        System.out.println(msg1.length()==0);
-        System.out.println(login_verify(msg1, msg2));
+        WSDeviceBean wsDeviceBean = new WSDeviceBean();
 
+        wsDeviceBean.setTemperature(123);
+        wsDeviceBean.setDeviceId("789");
 
+        System.out.println(new Gson().toJson(wsDeviceBean));
     }
 
-    private static boolean login_verify(String name, String pwd) {
+    private static boolean findNameExist(String name) {
         boolean b = false;
-
-        System.out.println("name = " + name + ", " + "pwd " + pwd);
-
-        if (StringUtils.isEmpty(name) || StringUtils.isEmpty(pwd)) {
+        if (name == null) {
             b = false;
+            System.out.println("name " + name);
         } else {
-//            UserInfoBean userInfoBean = new UserInfoBean();
-//            userInfoBean.setLoginName(name);
-//
-//            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
-//            while (mongoCursor.hasNext()) {
-//                if (StringUtils.equals(pwd, (String) mongoCursor.next().get("LoginPassword"))) {
-//                    b = true;
-//                }
-//            }
-        }
+            UserInfoBean userInfoBean = new UserInfoBean();
+            userInfoBean.setLoginName(name);
 
-        System.out.println("login_verify " + b);
+            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
+//            if (mongoCursor != null) {
+//                b = mongoCursor.hasNext();
+//            }
+            while (mongoCursor.hasNext()) {
+                System.out.println(mongoCursor.next());
+            }
+        }
         return b;
     }
 }

@@ -35,10 +35,9 @@ public class ServletLogin extends HttpServlet {
         //设置浏览器以UTF-8编码进行接收,解决中文乱码问题
         response.setContentType("text/html;charset=UTF-8");
 
-        Map<String, String> map = new HashMap<>();
-        System.out.println("test1  ");
+        System.out.println("request  " + new Gson().toJson(request.getParameterMap()));
 
-        System.out.println("test2  " + login_verify(null, null));
+        Map<String, String> map = new HashMap<>();
 
         PrintWriter out = response.getWriter();
         //获取浏览器访问访问服务器时传递过来的cookie数组
@@ -57,17 +56,20 @@ public class ServletLogin extends HttpServlet {
 
             if (login_verify(name, pwd)) {
                 map.put("isSuccess", "y");
+                map.put("msg", "欢迎");
             } else {
                 map.put("isSuccess", "n");
+                map.put("msg", "用户名或密码错误");
             }
+
         } else {
             System.out.println("cookie null");
-            name = request.getHeader("name");
-            pwd = request.getHeader("pwd");
-            String isSave = request.getHeader("isSave");
+            name = request.getParameter("name");
+            pwd = request.getParameter("pwd");
+            String isSave = request.getParameter("isSave");
 
             if (login_verify(name, pwd)) {
-                if (StringUtils.equals(isSave, "y")) {
+                if (isSave.equals("y")) {
                     Cookie cookieName = new Cookie("name", name);
                     Cookie cookiePwd = new Cookie("pwd", pwd);
 
@@ -83,9 +85,12 @@ public class ServletLogin extends HttpServlet {
                 map.put("isSuccess", "n");
                 map.put("msg", "用户名或密码错误");
             }
-            out.print(new Gson().toJson(map));
-            out.flush();
+
         }
+        String json = new Gson().toJson(map);
+        System.out.println("json: " + json);
+        out.print(json);
+        out.flush();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -113,7 +118,7 @@ public class ServletLogin extends HttpServlet {
 
             MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
             while (mongoCursor.hasNext()) {
-                if (StringUtils.equals(pwd, (String) mongoCursor.next().get("LoginPassword"))) {
+                if (pwd.equals((String) mongoCursor.next().get("LoginPassword"))) {
                     b = true;
                 }
             }

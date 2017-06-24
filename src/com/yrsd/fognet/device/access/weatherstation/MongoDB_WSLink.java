@@ -39,15 +39,26 @@ public class MongoDB_WSLink {
         if (mongoClient == null) {
             mongoClient = new MongoClient(host, port);
             mongoDatabase = mongoClient.getDatabase(databaseName);
+
             wsRecordCollection = mongoDatabase.getCollection(recordCollectionName);
             wsDeviceCollection = mongoDatabase.getCollection(deviceCollectionName);
             useInfoCollection = mongoDatabase.getCollection(userInfoCollectionName);
+
 
             wsRecordCollection.createIndex(new Document("DeviceId", 1));
             wsDeviceCollection.createIndex(new Document("DeviceId", 1));
             useInfoCollection.createIndex(new Document("LoginName", 1));
 
         }
+    }
+
+
+    public static MongoCollection getWsRecordCollection() {
+        return wsRecordCollection;
+    }
+
+    public static void setWsRecordCollection(MongoCollection wsRecordCollection) {
+        MongoDB_WSLink.wsRecordCollection = wsRecordCollection;
     }
 
     public static void stop() {
@@ -92,11 +103,11 @@ public class MongoDB_WSLink {
         }
     }
 
-    public static MongoCursor<Document> find(WSDeviceBean bean) {
+    public static MongoCursor<WSDeviceBean> find(WSDeviceBean bean) {
 
         try {
             Document dbObject = bean2DBObject(bean);
-            FindIterable<Document> findIterable = wsDeviceCollection.find(dbObject);
+            FindIterable<WSDeviceBean> findIterable = wsDeviceCollection.find(dbObject);
             return findIterable.iterator();
 //            MongoCursor<Document> mongoCursor = findIterable.iterator();
 //            while (mongoCursor.hasNext()) {
@@ -108,11 +119,22 @@ public class MongoDB_WSLink {
         }
     }
 
-    public static MongoCursor<Document> find(UserInfoBean bean) {
+    public static MongoCursor<WSRecordBean> find(WSRecordBean bean) {
+        try {
+            Document dbObject = bean2DBObject(bean);
+            FindIterable<WSRecordBean> findIterable = wsRecordCollection.find(dbObject);
+            return findIterable.iterator();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static MongoCursor<UserInfoBean> find(UserInfoBean bean) {
 
         try {
             Document dbObject = bean2DBObject(bean);
-            FindIterable<Document> findIterable = wsDeviceCollection.find(dbObject);
+            FindIterable<UserInfoBean> findIterable = useInfoCollection.find(dbObject);
             return findIterable.iterator();
 //            MongoCursor<Document> mongoCursor = findIterable.iterator();
 //            while (mongoCursor.hasNext()) {

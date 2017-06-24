@@ -193,13 +193,13 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
                     mongoCollection.updateOne(Filters.eq("DeviceId", pack.getDeviceId()),
                             new Document("$set", new Document("LastOnLineDate", new Date())));
                 } else {
-                    wsDeviceBean.setCreateDate(new Date());
+                    wsDeviceBean.setDeviceCreateDate(new Date());
                     wsDeviceBean.setLastOnLineDate(new Date());
                     MongoDB_WSLink.insert(wsDeviceBean);
                 }
                 System.out.println("weatherStation_pro  hasNext");
             } else {
-                wsDeviceBean.setCreateDate(new Date());
+                wsDeviceBean.setDeviceCreateDate(new Date());
                 wsDeviceBean.setLastOnLineDate(new Date());
                 MongoDB_WSLink.insert(wsDeviceBean);
                 System.out.println("weatherStation_pro else hasNext");
@@ -214,7 +214,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             case 0x000112:  //只包含传感器信息的心跳命令
                 WSRecordBean wsRecordBean = new WSRecordBean();
                 wsRecordBean.setDeviceId(pack.getDeviceId());
-                wsRecordBean.setCreateDate(new Date());
+                wsRecordBean.setRecordCreateDate(new Date());
 
                 int index = 2;
                 int windSpeed = pack.getData()[index++] & 0xFF;
