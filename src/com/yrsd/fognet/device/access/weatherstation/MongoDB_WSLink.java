@@ -1,8 +1,6 @@
 package com.yrsd.fognet.device.access.weatherstation;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.Block;
-import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
@@ -12,7 +10,10 @@ import com.mongodb.client.model.Filters;
 import com.yrsd.fognet.device.access.user.entity.UserInfoBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSDeviceBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSRecordBean;
+import org.apache.commons.beanutils.BeanUtils;
 import org.bson.Document;
+
+import java.lang.reflect.InvocationTargetException;
 
 import static com.yrsd.fognet.MongoUtil.bean2DBObject;
 
@@ -29,9 +30,9 @@ public class MongoDB_WSLink {
 
     private static MongoDatabase mongoDatabase = null;
     private static MongoClient mongoClient = null;
-    private static MongoCollection wsRecordCollection = null;
-    private static MongoCollection wsDeviceCollection = null;
-    private static MongoCollection useInfoCollection = null;
+    private static MongoCollection<Document> wsRecordCollection = null;
+    private static MongoCollection<Document> wsDeviceCollection = null;
+    private static MongoCollection<UserInfoBean> useInfoCollection = null;
 
 
     public static void start() {
@@ -42,7 +43,7 @@ public class MongoDB_WSLink {
 
             wsRecordCollection = mongoDatabase.getCollection(recordCollectionName);
             wsDeviceCollection = mongoDatabase.getCollection(deviceCollectionName);
-            useInfoCollection = mongoDatabase.getCollection(userInfoCollectionName);
+            useInfoCollection = mongoDatabase.getCollection(userInfoCollectionName, UserInfoBean.class);
 
 
             wsRecordCollection.createIndex(new Document("DeviceId", 1));
@@ -52,14 +53,6 @@ public class MongoDB_WSLink {
         }
     }
 
-
-    public static MongoCollection getWsRecordCollection() {
-        return wsRecordCollection;
-    }
-
-    public static void setWsRecordCollection(MongoCollection wsRecordCollection) {
-        MongoDB_WSLink.wsRecordCollection = wsRecordCollection;
-    }
 
     public static void stop() {
         System.out.println("weather station mongodb link stop...");
@@ -72,42 +65,39 @@ public class MongoDB_WSLink {
     }
 
     public static void insert(WSRecordBean bean) {
-
+        Document document = new Document();
         try {
-            Document dbObject = bean2DBObject(bean);
-            wsRecordCollection.insertOne(dbObject);
-        } catch (IllegalAccessException e) {
+//            Document dbObject = bean2DBObject(bean);
+            BeanUtils.copyProperties(document, bean);
+            wsRecordCollection.insertOne(document);
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
 
     public static void insert(WSDeviceBean bean) {
-
+        Document document = new Document();
         try {
-            Document dbObject = bean2DBObject(bean);
-            wsDeviceCollection.insertOne(dbObject);
-            System.out.println("insert " + dbObject.toJson());
-        } catch (IllegalAccessException e) {
+//            Document dbObject = bean2DBObject(bean);
+            BeanUtils.copyProperties(document, bean);
+            wsDeviceCollection.insertOne(document);
+            System.out.println("insert " + document.toJson());
+        } catch (IllegalAccessException | InvocationTargetException e) {
             e.printStackTrace();
         }
     }
 
     public static void insert(UserInfoBean bean) {
 
-        try {
-            Document dbObject = bean2DBObject(bean);
-            useInfoCollection.insertOne(dbObject);
-            System.out.println("insert " + dbObject.toJson());
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
+        useInfoCollection.insertOne(bean);
+//            System.out.println("insert " + bean.toJson());
     }
 
-    public static MongoCursor<WSDeviceBean> find(WSDeviceBean bean) {
+    public static MongoCursor<Document> find(WSDeviceBean bean) {
 
         try {
-            Document dbObject = bean2DBObject(bean);
-            FindIterable<WSDeviceBean> findIterable = wsDeviceCollection.find(dbObject);
+            BasicDBObject dbObject = bean2DBObject(bean);
+            FindIterable<Document> findIterable = wsDeviceCollection.find(dbObject);
             return findIterable.iterator();
 //            MongoCursor<Document> mongoCursor = findIterable.iterator();
 //            while (mongoCursor.hasNext()) {
@@ -119,10 +109,10 @@ public class MongoDB_WSLink {
         }
     }
 
-    public static MongoCursor<WSRecordBean> find(WSRecordBean bean) {
+    public static MongoCursor<Document> find(WSRecordBean bean) {
         try {
-            Document dbObject = bean2DBObject(bean);
-            FindIterable<WSRecordBean> findIterable = wsRecordCollection.find(dbObject);
+            BasicDBObject dbObject = bean2DBObject(bean);
+            FindIterable<Document> findIterable = wsRecordCollection.find(dbObject);
             return findIterable.iterator();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -132,18 +122,14 @@ public class MongoDB_WSLink {
 
     public static MongoCursor<UserInfoBean> find(UserInfoBean bean) {
 
-        try {
-            Document dbObject = bean2DBObject(bean);
-            FindIterable<UserInfoBean> findIterable = useInfoCollection.find(dbObject);
-            return findIterable.iterator();
+//        FindIterable<UserInfoBean> findIterable = useInfoCollection.find(bean);
+        FindIterable<UserInfoBean> findIterable = useInfoCollection.find();
+        return findIterable.iterator();
 //            MongoCursor<Document> mongoCursor = findIterable.iterator();
 //            while (mongoCursor.hasNext()) {
 //                System.out.println(mongoCursor.next());
 //            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            return null;
-        }
+
     }
 
     public static void update(WSDeviceBean bean) {
@@ -154,11 +140,27 @@ public class MongoDB_WSLink {
 
     }
 
-    public static MongoCollection getWsDeviceCollection() {
+    public static MongoCollection<UserInfoBean> getUseInfoCollection() {
+        return useInfoCollection;
+    }
+
+    public static void setUseInfoCollection(MongoCollection<UserInfoBean> useInfoCollection) {
+        MongoDB_WSLink.useInfoCollection = useInfoCollection;
+    }
+
+    public static MongoCollection<Document> getWsRecordCollection() {
+        return wsRecordCollection;
+    }
+
+    public static void setWsRecordCollection(MongoCollection<Document> wsRecordCollection) {
+        MongoDB_WSLink.wsRecordCollection = wsRecordCollection;
+    }
+
+    public static MongoCollection<Document> getWsDeviceCollection() {
         return wsDeviceCollection;
     }
 
-    public static void setWsDeviceCollection(MongoCollection wsDeviceCollection) {
+    public static void setWsDeviceCollection(MongoCollection<Document> wsDeviceCollection) {
         MongoDB_WSLink.wsDeviceCollection = wsDeviceCollection;
     }
 }

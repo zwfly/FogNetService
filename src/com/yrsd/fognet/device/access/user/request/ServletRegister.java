@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,15 +44,19 @@ public class ServletRegister extends HttpServlet {
         if (findNameExist(name)) {
             map.put("isSuccess", "n");
             map.put("msg", "账号已存在");
+            System.out.println("map1: " + new Gson().toJson(map));
         } else {
             UserInfoBean bean = new UserInfoBean();
             bean.setLoginName(name);
             bean.setUserName(nickName);
             bean.setLoginPassword(pwd);
+            bean.setOwnDevicelist(new ArrayList<>());
             MongoDB_WSLink.insert(bean);
 
             map.put("isSuccess", "y");
             map.put("msg", "注册成功");
+            System.out.println("map2: " + new Gson().toJson(map));
+
         }
         out.print(new Gson().toJson(map));
         out.flush();
@@ -71,7 +76,12 @@ public class ServletRegister extends HttpServlet {
             UserInfoBean userInfoBean = new UserInfoBean();
             userInfoBean.setLoginName(name);
 
-            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
+            System.out.println("findNameExist 1");
+            Document document = new Document();
+            document.append("LoginName", name);
+            MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find((UserInfoBean) document);
+            System.out.println("findNameExist 2");
+            System.out.println("findNameExist 3" + mongoCursor);
             if (mongoCursor != null) {
                 b = mongoCursor.hasNext();
             }

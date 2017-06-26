@@ -40,21 +40,15 @@ public class ServletLogin extends HttpServlet {
         Map<String, String> map = new HashMap<>();
 
         PrintWriter out = response.getWriter();
-        //获取浏览器访问访问服务器时传递过来的cookie数组
+
         Cookie[] cookies = request.getCookies();
+
         //如果用户是第一次访问，那么得到的cookies将是null
         String name = null;
         String pwd = null;
         if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("name")) {
-                    name = cookie.getValue();
-                } else if (cookie.getName().equals("pwd")) {
-                    pwd = cookie.getValue();
-                }
-            }
-
-            if (login_verify(name, pwd)) {
+            UserAuthentication userAuthentication = new UserAuthentication(cookies);
+            if (userAuthentication.verify()) {
                 map.put("isSuccess", "y");
                 map.put("msg", "欢迎");
             } else {
@@ -63,12 +57,12 @@ public class ServletLogin extends HttpServlet {
             }
 
         } else {
-            System.out.println("cookie null");
             name = request.getParameter("name");
             pwd = request.getParameter("pwd");
             String isSave = request.getParameter("isSave");
 
-            if (login_verify(name, pwd)) {
+            UserAuthentication userAuthentication = new UserAuthentication(name, pwd);
+            if (userAuthentication.verify()) {
                 if (isSave.equals("y")) {
                     Cookie cookieName = new Cookie("name", name);
                     Cookie cookiePwd = new Cookie("pwd", pwd);
@@ -115,13 +109,10 @@ public class ServletLogin extends HttpServlet {
         } else {
             UserInfoBean userInfoBean = new UserInfoBean();
             userInfoBean.setLoginName(name);
+            userInfoBean.setLoginPassword(pwd);
 
-            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
-            while (mongoCursor.hasNext()) {
-                if (pwd.equals((String) mongoCursor.next().get("LoginPassword"))) {
-                    b = true;
-                }
-            }
+            MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find(userInfoBean);
+            b = mongoCursor.hasNext();
         }
 
         System.out.println("login_verify " + b);

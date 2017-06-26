@@ -28,12 +28,12 @@ public class MongoUtil {
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    public static <T> Document bean2DBObject(T bean) throws IllegalArgumentException,
+    public static <T> BasicDBObject bean2DBObject(T bean) throws IllegalArgumentException,
             IllegalAccessException {
         if (bean == null) {
             return null;
         }
-        Document dbObject = new Document();
+        BasicDBObject dbObject = new BasicDBObject();
         // 获取对象对应类中的所有属性域
         Field[] fields = bean.getClass().getDeclaredFields();
         for (Field field : fields) {

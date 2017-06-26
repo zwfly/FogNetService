@@ -33,7 +33,7 @@ public class TestMain2 {
             UserInfoBean userInfoBean = new UserInfoBean();
             userInfoBean.setLoginName(name);
 
-            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
+            MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find(userInfoBean);
 //            if (mongoCursor != null) {
 //                b = mongoCursor.hasNext();
 //            }

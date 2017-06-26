@@ -1,6 +1,8 @@
 package com.yrsd.fognet.device.access.user.request;
 
 import com.google.gson.Gson;
+import com.mongodb.BasicDBObject;
+import com.mongodb.Cursor;
 import com.mongodb.DBCursor;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.ListCollectionsIterable;
@@ -30,8 +32,8 @@ import java.util.Map;
 /**
  * Created by admin on 2017/6/24.
  */
-@WebServlet(name = "ServletMyDevices", urlPatterns = "/yurunsd/user/devices")
-public class ServletMyDevices extends HttpServlet {
+@WebServlet(name = "ServletQueryDevices", urlPatterns = "/yurunsd/user/devices")
+public class ServletQueryDevices extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("ServletMyDevices doPost");
         response.setCharacterEncoding("UTF-8");
@@ -41,10 +43,12 @@ public class ServletMyDevices extends HttpServlet {
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
-        String name = null;
-        String pwd = null;
+//        String name = null;
+//        String pwd = null;
         PrintWriter out = response.getWriter();
         Cookie[] cookies = request.getCookies();
+        UserAuthentication userAuthentication = new UserAuthentication(cookies);
+
         if (cookies == null) {
             map.put("isSuccess", "n");
             map.put("isClearCookies", "y");
@@ -54,89 +58,63 @@ public class ServletMyDevices extends HttpServlet {
             out.flush();
             return;
         } else {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("name")) {
-                    name = cookie.getValue();
-                } else if (cookie.getName().equals("pwd")) {
-                    pwd = cookie.getValue();
-                }
+            if (!userAuthentication.verify()) {
+                map.put("isSuccess", "n");
+                map.put("isClearCookies", "n");
+                map.put("msg", "密码错误");
+                out.print(new Gson().toJson(map));
+                out.flush();
+                return;
             }
         }
 
-        if (!login_verify(name, pwd)) {
-            map.put("isSuccess", "n");
-            map.put("isClearCookies", "n");
-            map.put("msg", "密码错误");
-
-            out.print(new Gson().toJson(map));
-            out.flush();
-            return;
-
-        } else {
-            map.put("isSuccess", "y");
-            map.put("isClearCookies", "n");
+        map.put("isSuccess", "y");
+        map.put("isClearCookies", "n");
 //            map.put("msg", "密码错误");
 
-        }
-
         String deviceType = request.getParameter("DeviceType");
-
         System.out.println("params  " + new Gson().toJson(request.getParameterMap()));
 
         if (deviceType == null) {
-
             List<WSDeviceBean> list = new ArrayList<>();
             UserInfoBean userInfoBean = new UserInfoBean();
 
-
-            userInfoBean.setLoginName(name);
-            userInfoBean.setLoginPassword(pwd);
+            userInfoBean.setLoginName(userAuthentication.getName());
+            userInfoBean.setLoginPassword(userAuthentication.getPwd());
 
             MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find(userInfoBean);
-            List<UserOwnDeviceBean> ownDevicelist = null;
+            List<UserOwnDeviceBean> ownDevicelist = new ArrayList<>();
             if (mongoCursor != null) {
                 while (mongoCursor.hasNext()) {
-                    ownDevicelist = mongoCursor.next().getOwnDevicelist();
+                    UserInfoBean bean = new UserInfoBean();
+                    try {
+                        BeanUtils.copyProperties(bean, mongoCursor.next());
+                    } catch (IllegalAccessException | InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                    ownDevicelist = bean.getOwnDevicelist();
                 }
             }
             if (ownDevicelist != null) {
-                for (int i = 0; i < ownDevicelist.size(); i++) {
-                    String id = ownDevicelist.get(i).getDeviceId();
+                for (UserOwnDeviceBean anOwnDevicelist : ownDevicelist) {
+                    String id = anOwnDevicelist.getDeviceId();
                     WSDeviceBean wsDeviceBean = new WSDeviceBean();
                     wsDeviceBean.setDeviceId(id);
-                    MongoCursor<WSDeviceBean> mcDevice = MongoDB_WSLink.find(wsDeviceBean);
+                    MongoCursor<Document> mcDevice = MongoDB_WSLink.find(wsDeviceBean);
                     if (mcDevice != null) {
                         while (mcDevice.hasNext()) {
-                            wsDeviceBean = mcDevice.next();
-                        }
-                    }
 
-
-                    Document document = new Document().append("DeviceId", id);
-                    WSRecordBean wsRecordBean = new WSRecordBean();
-                    wsRecordBean.setDeviceId(id);
-
-                    FindIterable findIterable = MongoDB_WSLink.getWsRecordCollection().find(document).sort(new Document("RecordCreateDate", 1));
-
-
-                    if (mcRecord != null) {
-                        while (mcRecord.hasNext()) {
-//                            wsRecordBean = mcRecord.next();
+                            WSDeviceBean bean = new WSDeviceBean();
                             try {
-                                BeanUtils.copyProperties(wsDeviceBean, wsRecordBean);
-                            } catch (IllegalAccessException e) {
-                                e.printStackTrace();
-                            } catch (InvocationTargetException e) {
+                                BeanUtils.copyProperties(bean, mcDevice.next());
+                            } catch (IllegalAccessException | InvocationTargetException e) {
                                 e.printStackTrace();
                             }
+                            wsDeviceBean = bean;
                         }
                     }
-
-
                     list.add(wsDeviceBean);
                 }
-
-
             }
 
         } else {
@@ -167,7 +145,7 @@ public class ServletMyDevices extends HttpServlet {
             UserInfoBean userInfoBean = new UserInfoBean();
             userInfoBean.setLoginName(name);
 
-            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
+            MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find(userInfoBean);
             while (mongoCursor.hasNext()) {
                 if (pwd.equals((String) mongoCursor.next().get("LoginPassword"))) {
                     b = true;
