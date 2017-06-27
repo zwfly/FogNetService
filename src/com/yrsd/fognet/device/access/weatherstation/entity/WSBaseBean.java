@@ -7,44 +7,44 @@ import java.io.Serializable;
  */
 public class WSBaseBean implements Serializable {
 
-    private Float WindSpeed;
-    private String WindDirection;
-    private Integer Temperature;
-    private Integer Humidity;
+    private Float windSpeed;
+    private String windDirection;
+    private Integer temperature;
+    private Integer humidity;
     private Integer PM2d5;
     private Integer PM10;
 
 
     public Float getWindSpeed() {
-        return WindSpeed;
+        return windSpeed;
     }
 
     public void setWindSpeed(Float windSpeed) {
-        WindSpeed = windSpeed;
+        this.windSpeed = windSpeed;
     }
 
     public String getWindDirection() {
-        return WindDirection;
+        return windDirection;
     }
 
     public void setWindDirection(String windDirection) {
-        WindDirection = windDirection;
+        this.windDirection = windDirection;
     }
 
     public Integer getTemperature() {
-        return Temperature;
+        return temperature;
     }
 
     public void setTemperature(Integer temperature) {
-        Temperature = temperature;
+        this.temperature = temperature;
     }
 
     public Integer getHumidity() {
-        return Humidity;
+        return humidity;
     }
 
     public void setHumidity(Integer humidity) {
-        Humidity = humidity;
+        this.humidity = humidity;
     }
 
     public Integer getPM2d5() {

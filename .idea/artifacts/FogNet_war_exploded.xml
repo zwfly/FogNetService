@@ -2,15 +2,20 @@
   <artifact type="exploded-war" name="FogNet:war exploded">
     <output-path>$PROJECT_DIR$/out/artifacts/FogNet_war_exploded</output-path>
     <root id="root">
-      <element id="javaee-facet-resources" facet="FogNetService/web/Web" />
+      <element id="javaee-facet-resources" facet="FogNet/web/Web" />
       <element id="directory" name="WEB-INF">
         <element id="directory" name="classes">
-          <element id="module-output" name="FogNetService" />
+          <element id="module-output" name="FogNet" />
         </element>
         <element id="directory" name="lib">
           <element id="library" level="project" name="mongo-java-driver-3.4.2" />
           <element id="library" level="project" name="gson-2.8.0" />
           <element id="library" level="project" name="netty-all-4.1.11.Final" />
+          <element id="library" level="project" name="commons-lang3-3.5" />
+          <element id="library" level="project" name="commons-beanutils-1.9.3" />
+          <element id="library" level="project" name="org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0" />
+          <element id="library" level="project" name="commons-logging-1.2" />
+          <element id="library" level="project" name="commons-collections-3.2.2" />
         </element>
       </element>
     </root>

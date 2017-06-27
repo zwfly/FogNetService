@@ -7,11 +7,13 @@ import com.mongodb.DBCursor;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.ListCollectionsIterable;
 import com.mongodb.client.MongoCursor;
+import com.yrsd.fognet.MongoUtil;
 import com.yrsd.fognet.device.access.user.entity.UserInfoBean;
 import com.yrsd.fognet.device.access.user.entity.UserOwnDeviceBean;
 import com.yrsd.fognet.device.access.weatherstation.MongoDB_WSLink;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSDeviceBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSRecordBean;
+import com.yrsd.fognet.utils.BeanMapConvertUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.bson.Document;
 
@@ -29,17 +31,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.yrsd.fognet.MongoUtil.bean2DBObject;
+
 /**
  * Created by admin on 2017/6/24.
  */
-@WebServlet(name = "ServletQueryDevices", urlPatterns = "/yurunsd/user/devices")
+@WebServlet(name = "ServletQueryDevices", urlPatterns = "/yurunsd/user/devices/query")
 public class ServletQueryDevices extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        System.out.println("ServletMyDevices doPost");
+        System.out.println("ServletQueryDevices doPost");
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
-        Map<String, String> map = new HashMap<>();
+        Map<String, Object> map = new HashMap<>();
         response.setCharacterEncoding("UTF-8");
         response.setContentType("text/html;charset=UTF-8");
 
@@ -71,60 +75,110 @@ public class ServletQueryDevices extends HttpServlet {
         map.put("isSuccess", "y");
         map.put("isClearCookies", "n");
 //            map.put("msg", "密码错误");
-
-        String deviceType = request.getParameter("DeviceType");
+        List<Map<String, Object>> mapList = new ArrayList<>();
+        String deviceType = request.getParameter("deviceType");
         System.out.println("params  " + new Gson().toJson(request.getParameterMap()));
-
+        System.out.println("devicetype " + deviceType);
         if (deviceType == null) {
+
             List<WSDeviceBean> list = new ArrayList<>();
             UserInfoBean userInfoBean = new UserInfoBean();
 
             userInfoBean.setLoginName(userAuthentication.getName());
             userInfoBean.setLoginPassword(userAuthentication.getPwd());
 
-            MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find(userInfoBean);
-            List<UserOwnDeviceBean> ownDevicelist = new ArrayList<>();
+            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
+            List<String> ownDevicelist = new ArrayList<>();
             if (mongoCursor != null) {
                 while (mongoCursor.hasNext()) {
-                    UserInfoBean bean = new UserInfoBean();
+                    ownDevicelist = (List<String>) mongoCursor.next().get("ownDeviceList");
+                }
+            }
+            System.out.println("ownDevicelist  " + new Gson().toJson(ownDevicelist));
+
+            for (String anOwnDevicelist : ownDevicelist) {
+                WSDeviceBean wsDeviceBean = new WSDeviceBean();
+                wsDeviceBean.setDeviceId(anOwnDevicelist);
+                MongoCursor<Document> mcDevice = MongoDB_WSLink.find(wsDeviceBean);
+                if (mcDevice != null) {
+                    while (mcDevice.hasNext()) {
+                        WSDeviceBean bean = new WSDeviceBean();
+                        try {
+                            MongoUtil.dbObject2Bean(mcDevice.next(), bean);
+
+
+                            list.add(bean);
+                        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+            System.out.println("list: " + new Gson().toJson(list));
+
+            for (WSDeviceBean wsDeviceBean : list) {
+                Map<String, Object> map1 = new HashMap<>();
+//                try {
+////                    map1 = BeanUtils.describe(wsDeviceBean);
+//                    BeanUtils.copyProperties(map1, wsDeviceBean);
+//                } catch (IllegalAccessException | InvocationTargetException e) {
+//                    e.printStackTrace();
+//                }
+                map1 = BeanMapConvertUtils.bean2Map(wsDeviceBean);
+                mapList.add(map1);
+                System.out.println("map1  " + new Gson().toJson(map1));
+
+            }
+            System.out.println("mapList  " + new Gson().toJson(mapList));
+
+            for (Map<String, Object> aMapList : mapList) {
+                WSRecordBean recordBean = new WSRecordBean();
+                String id = (String) aMapList.get("deviceId");
+                recordBean.setDeviceId(id);
+                MongoCursor<Document> mcRecord = null;
+                try {
+                    mcRecord = MongoDB_WSLink.getWsRecordCollection()
+                            .find(bean2DBObject(recordBean)).sort(new Document("recordCreateDate", 1)).iterator();
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+                if (mcRecord != null) {
+                    Map<String, String> map3 = new HashMap<>();
+                    List<WSRecordBean> wsRecordBeanList = new ArrayList<>();
+                    while (mcRecord.hasNext()) {
+                        WSRecordBean bean = new WSRecordBean();
+                        try {
+                            MongoUtil.dbObject2Bean(mcRecord.next(), bean);
+                            wsRecordBeanList.add(bean);
+                        } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     try {
-                        BeanUtils.copyProperties(bean, mongoCursor.next());
+                        if (wsRecordBeanList.size() > 0) {
+                            BeanUtils.populate(wsRecordBeanList.get(wsRecordBeanList.size() - 1), map3);
+                            aMapList.putAll(map3);
+                        }
                     } catch (IllegalAccessException | InvocationTargetException e) {
                         e.printStackTrace();
                     }
-                    ownDevicelist = bean.getOwnDevicelist();
-                }
-            }
-            if (ownDevicelist != null) {
-                for (UserOwnDeviceBean anOwnDevicelist : ownDevicelist) {
-                    String id = anOwnDevicelist.getDeviceId();
-                    WSDeviceBean wsDeviceBean = new WSDeviceBean();
-                    wsDeviceBean.setDeviceId(id);
-                    MongoCursor<Document> mcDevice = MongoDB_WSLink.find(wsDeviceBean);
-                    if (mcDevice != null) {
-                        while (mcDevice.hasNext()) {
 
-                            WSDeviceBean bean = new WSDeviceBean();
-                            try {
-                                BeanUtils.copyProperties(bean, mcDevice.next());
-                            } catch (IllegalAccessException | InvocationTargetException e) {
-                                e.printStackTrace();
-                            }
-                            wsDeviceBean = bean;
-                        }
-                    }
-                    list.add(wsDeviceBean);
                 }
             }
+
+
+            System.out.println("list1  " + new Gson().toJson(mapList));
 
         } else {
 
 
         }
-
+        map.put("list", mapList);
 
         out.print(new Gson().toJson(map));
         out.flush();
+        System.out.println("out list" + new Gson().toJson(map));
+
         System.out.println("ServletMyDevices doPost flush");
 
 
@@ -145,7 +199,7 @@ public class ServletQueryDevices extends HttpServlet {
             UserInfoBean userInfoBean = new UserInfoBean();
             userInfoBean.setLoginName(name);
 
-            MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find(userInfoBean);
+            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
             while (mongoCursor.hasNext()) {
                 if (pwd.equals((String) mongoCursor.next().get("LoginPassword"))) {
                     b = true;

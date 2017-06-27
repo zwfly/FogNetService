@@ -8,34 +8,32 @@ import java.util.Date;
  */
 public class WSRecordBean extends WSBaseBean implements Serializable {
 
-    private String DeviceId;
-    private String DeviceType;
+    private String deviceId;
+    private String deviceType;
 
-    private Date RecordCreateDate;
-
-
-    public String getDeviceType() {
-        return DeviceType;
-    }
-
-    public void setDeviceType(String deviceType) {
-        DeviceType = deviceType;
-    }
+    private Date recordCreateDate;
 
     public String getDeviceId() {
-        return DeviceId;
+        return deviceId;
     }
 
     public void setDeviceId(String deviceId) {
-        DeviceId = deviceId;
+        this.deviceId = deviceId;
     }
 
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
 
     public Date getRecordCreateDate() {
-        return RecordCreateDate;
+        return recordCreateDate;
     }
 
     public void setRecordCreateDate(Date recordCreateDate) {
-        RecordCreateDate = recordCreateDate;
+        this.recordCreateDate = recordCreateDate;
     }
 }

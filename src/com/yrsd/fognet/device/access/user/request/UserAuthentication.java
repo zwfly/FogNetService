@@ -64,7 +64,7 @@ public class UserAuthentication {
             userInfoBean.setLoginName(n);
             userInfoBean.setLoginPassword(p);
 
-            MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find(userInfoBean);
+            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
             if (mongoCursor.hasNext()) {
                 b = true;
             } else {

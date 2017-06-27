@@ -7,22 +7,22 @@ import java.io.Serializable;
  */
 public class UserOwnDeviceBean implements Serializable {
 
-    private String DeviceId;
-    private Integer DeviceType;
+    private String deviceId;
+    private Integer deviceType;
 
     public String getDeviceId() {
-        return DeviceId;
+        return deviceId;
     }
 
     public void setDeviceId(String deviceId) {
-        DeviceId = deviceId;
+        this.deviceId = deviceId;
     }
 
     public Integer getDeviceType() {
-        return DeviceType;
+        return deviceType;
     }
 
     public void setDeviceType(Integer deviceType) {
-        DeviceType = deviceType;
+        this.deviceType = deviceType;
     }
 }

@@ -44,42 +44,46 @@ public class ServletAddDevice extends HttpServlet {
 
             System.out.println("ServletAddDevice verify fail");
             return;
+        } else {
+            map.put("isSuccess", "n");
+            map.put("isContain", "n");
+//            map.put("msg", "添加成功");
+
         }
         String uid = request.getParameter("uid");
-        String type = request.getParameter("type");
+//        String type = request.getParameter("type");
 
         System.out.println("ServletAddDevice params: " + new Gson().toJson(request.getParameterMap()));
 
         UserInfoBean bean = new UserInfoBean();
         bean.setLoginName(userAuthentication.getName());
 
-        MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find(bean);
+        MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(bean);
         while (mongoCursor.hasNext()) {
-            List<UserOwnDeviceBean> list = (List<UserOwnDeviceBean>) mongoCursor.next().get("OwnDevicelist");
-            System.out.println("ServletAddDevice list: " + new Gson().toJson(list));
+            List<String> list = (List<String>) mongoCursor.next().get("ownDeviceList");
             if (list == null) {
                 list = new ArrayList<>();
             }
-            if (uid != null && type != null) {
-                UserOwnDeviceBean ownDeviceBean = new UserOwnDeviceBean();
-                ownDeviceBean.setDeviceId(uid);
-                Integer t = 0;
-                try {
-                    t = Integer.parseInt(type);
-                } catch (NumberFormatException e) {
-                    e.printStackTrace();
-                    t = 0;
+            if (uid != null) {
+
+                if (list.contains(uid)) {
+                    map.put("isSuccess", "n");
+                    map.put("isContain", "y");
+                    map.put("msg", "设备已存在");
+                } else {
+                    list.add(uid);
+                    map.put("isSuccess", "y");
+                    map.put("isContain", "n");
+                    map.put("msg", "添加成功");
                 }
-                ownDeviceBean.setDeviceType(t);
-                list.add(ownDeviceBean);
             }
-            System.out.println("add list = " + new Gson().toJson(list));
-
-            MongoCollection mongoCollection = MongoDB_WSLink.getWsDeviceCollection();
-            mongoCollection.updateOne(Filters.eq("LoginName", userAuthentication.getName()),
-                    new Document("$set", new Document("OwnDevicelist", list)));
-
+            MongoCollection mongoCollection = MongoDB_WSLink.getUseInfoCollection();
+            mongoCollection.updateOne(Filters.eq("loginName", userAuthentication.getName()),
+                    new Document("$set", new Document("ownDeviceList", list)));
         }
+
+        out.print(new Gson().toJson(map));
+        out.flush();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

@@ -50,7 +50,7 @@ public class ServletRegister extends HttpServlet {
             bean.setLoginName(name);
             bean.setUserName(nickName);
             bean.setLoginPassword(pwd);
-            bean.setOwnDevicelist(new ArrayList<>());
+            bean.setOwnDeviceList(new ArrayList<>());
             MongoDB_WSLink.insert(bean);
 
             map.put("isSuccess", "y");
@@ -79,7 +79,7 @@ public class ServletRegister extends HttpServlet {
             System.out.println("findNameExist 1");
             Document document = new Document();
             document.append("LoginName", name);
-            MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find((UserInfoBean) document);
+            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
             System.out.println("findNameExist 2");
             System.out.println("findNameExist 3" + mongoCursor);
             if (mongoCursor != null) {

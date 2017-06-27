@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.List;
 import java.util.SimpleTimeZone;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -13,6 +14,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.bson.Document;
+
+import javax.print.Doc;
 
 /**
  * Created by admin on 2017/6/15.
@@ -28,12 +31,11 @@ public class MongoUtil {
      * @throws IllegalArgumentException
      * @throws IllegalAccessException
      */
-    public static <T> BasicDBObject bean2DBObject(T bean) throws IllegalArgumentException,
-            IllegalAccessException {
+    public static <T> Document bean2DBObject(T bean) throws IllegalAccessException {
         if (bean == null) {
             return null;
         }
-        BasicDBObject dbObject = new BasicDBObject();
+        Document dbObject = new Document();
         // 获取对象对应类中的所有属性域
         Field[] fields = bean.getClass().getDeclaredFields();
         for (Field field : fields) {
@@ -68,6 +70,9 @@ public class MongoUtil {
             } else if (param instanceof Date) {
                 Date value = (Date) param;
                 dbObject.put(varName, value);
+            } else if (param instanceof List) {
+                List value = (List) param;
+                dbObject.put(varName, value);
             }
             // 恢复访问控制权限
             field.setAccessible(accessFlag);
@@ -85,7 +90,7 @@ public class MongoUtil {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    public static <T> T dbObject2Bean(DBObject dbObject, T bean) throws IllegalAccessException,
+    public static <T> T dbObject2Bean(Document dbObject, T bean) throws IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
         if (bean == null) {
             return null;

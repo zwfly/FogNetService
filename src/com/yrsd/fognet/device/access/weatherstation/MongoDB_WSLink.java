@@ -16,6 +16,7 @@ import org.bson.Document;
 import java.lang.reflect.InvocationTargetException;
 
 import static com.yrsd.fognet.MongoUtil.bean2DBObject;
+import static com.yrsd.fognet.MongoUtil.dbObject2Bean;
 
 /**
  * Created by admin on 2017/6/14.
@@ -32,7 +33,7 @@ public class MongoDB_WSLink {
     private static MongoClient mongoClient = null;
     private static MongoCollection<Document> wsRecordCollection = null;
     private static MongoCollection<Document> wsDeviceCollection = null;
-    private static MongoCollection<UserInfoBean> useInfoCollection = null;
+    private static MongoCollection<Document> useInfoCollection = null;
 
 
     public static void start() {
@@ -43,7 +44,7 @@ public class MongoDB_WSLink {
 
             wsRecordCollection = mongoDatabase.getCollection(recordCollectionName);
             wsDeviceCollection = mongoDatabase.getCollection(deviceCollectionName);
-            useInfoCollection = mongoDatabase.getCollection(userInfoCollectionName, UserInfoBean.class);
+            useInfoCollection = mongoDatabase.getCollection(userInfoCollectionName);
 
 
             wsRecordCollection.createIndex(new Document("DeviceId", 1));
@@ -76,27 +77,31 @@ public class MongoDB_WSLink {
     }
 
     public static void insert(WSDeviceBean bean) {
-        Document document = new Document();
+//        Document document = new Document();
         try {
-//            Document dbObject = bean2DBObject(bean);
-            BeanUtils.copyProperties(document, bean);
+            Document document = bean2DBObject(bean);
+//            BeanUtils.copyProperties(document, bean);
             wsDeviceCollection.insertOne(document);
             System.out.println("insert " + document.toJson());
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
     public static void insert(UserInfoBean bean) {
 
-        useInfoCollection.insertOne(bean);
-//            System.out.println("insert " + bean.toJson());
+        try {
+            Document document = bean2DBObject(bean);
+            useInfoCollection.insertOne(document);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public static MongoCursor<Document> find(WSDeviceBean bean) {
 
         try {
-            BasicDBObject dbObject = bean2DBObject(bean);
+            Document dbObject = bean2DBObject(bean);
             FindIterable<Document> findIterable = wsDeviceCollection.find(dbObject);
             return findIterable.iterator();
 //            MongoCursor<Document> mongoCursor = findIterable.iterator();
@@ -111,7 +116,7 @@ public class MongoDB_WSLink {
 
     public static MongoCursor<Document> find(WSRecordBean bean) {
         try {
-            BasicDBObject dbObject = bean2DBObject(bean);
+            Document dbObject = bean2DBObject(bean);
             FindIterable<Document> findIterable = wsRecordCollection.find(dbObject);
             return findIterable.iterator();
         } catch (IllegalAccessException e) {
@@ -120,11 +125,18 @@ public class MongoDB_WSLink {
         }
     }
 
-    public static MongoCursor<UserInfoBean> find(UserInfoBean bean) {
+    public static MongoCursor<Document> find(UserInfoBean bean) {
+        try {
 
-//        FindIterable<UserInfoBean> findIterable = useInfoCollection.find(bean);
-        FindIterable<UserInfoBean> findIterable = useInfoCollection.find();
-        return findIterable.iterator();
+            Document dbObject = bean2DBObject(bean);
+            FindIterable<Document> findIterable = useInfoCollection.find(dbObject);
+            return findIterable.iterator();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
 //            MongoCursor<Document> mongoCursor = findIterable.iterator();
 //            while (mongoCursor.hasNext()) {
 //                System.out.println(mongoCursor.next());
@@ -140,11 +152,11 @@ public class MongoDB_WSLink {
 
     }
 
-    public static MongoCollection<UserInfoBean> getUseInfoCollection() {
+    public static MongoCollection<Document> getUseInfoCollection() {
         return useInfoCollection;
     }
 
-    public static void setUseInfoCollection(MongoCollection<UserInfoBean> useInfoCollection) {
+    public static void setUseInfoCollection(MongoCollection<Document> useInfoCollection) {
         MongoDB_WSLink.useInfoCollection = useInfoCollection;
     }
 

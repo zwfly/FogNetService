@@ -111,7 +111,7 @@ public class ServletLogin extends HttpServlet {
             userInfoBean.setLoginName(name);
             userInfoBean.setLoginPassword(pwd);
 
-            MongoCursor<UserInfoBean> mongoCursor = MongoDB_WSLink.find(userInfoBean);
+            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(userInfoBean);
             b = mongoCursor.hasNext();
         }
 

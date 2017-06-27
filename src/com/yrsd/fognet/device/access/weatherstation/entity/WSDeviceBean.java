@@ -9,22 +9,22 @@ import java.util.Date;
  */
 public class WSDeviceBean extends WSBaseBean implements Serializable {
 
-    private String DeviceId;
-    private String DeviceType;
-    private String DeviceName;
-    private String DeviceAddr;
+    private String deviceId;
+    private String deviceType;
+    private String deviceName;
+    private String deviceAddr;
 
-    private Float Longitude;   //经度
+    private Float longitude;   //经度
     private Float latitude;    //纬度
     private Integer altitude;    //海拔
 
-    private Integer TemperatureAlarmUpper;
-    private Integer TemperatureAlarmLower;
-    private Boolean TemperatureAlarmEnable;
+    private Integer temperatureAlarmUpper;
+    private Integer temperatureAlarmLower;
+    private Boolean temperatureAlarmEnable;
 
-    private Integer HumidityAlarmUpper;
-    private Integer HumidityAlarmLower;
-    private Boolean HumidityAlarmEnable;
+    private Integer humidityAlarmUpper;
+    private Integer humidityAlarmLower;
+    private Boolean humidityAlarmEnable;
 
     private Integer PM2d5AlarmUpper;
     private Integer PM2d5AlarmLower;
@@ -32,41 +32,77 @@ public class WSDeviceBean extends WSBaseBean implements Serializable {
 
     private String phoneNumber;
 
-    private Date LastOnLineDate;
-    private Date LastOffLineDate;
+    private Date lastOnLineDate;
+    private Date lastOffLineDate;
 
-    private Date DeviceCreateDate;
+    private Date deviceCreateDate;
 
 
     @Override
     public String toString() {
         return "WSDeviceBean{" +
-                "DeviceId='" + DeviceId + '\'' +
-                ", DeviceType='" + DeviceType + '\'' +
-                ", DeviceName='" + DeviceName + '\'' +
-                ", DeviceAddr='" + DeviceAddr + '\'' +
-                ", TemperatureAlarmUpper=" + TemperatureAlarmUpper +
-                ", TemperatureAlarmLower=" + TemperatureAlarmLower +
-                ", TemperatureAlarmEnable=" + TemperatureAlarmEnable +
-                ", HumidityAlarmUpper=" + HumidityAlarmUpper +
-                ", HumidityAlarmLower=" + HumidityAlarmLower +
-                ", HumidityAlarmEnable=" + HumidityAlarmEnable +
+                "deviceId='" + deviceId + '\'' +
+                ", deviceType='" + deviceType + '\'' +
+                ", deviceName='" + deviceName + '\'' +
+                ", deviceAddr='" + deviceAddr + '\'' +
+                ", longitude=" + longitude +
+                ", latitude=" + latitude +
+                ", altitude=" + altitude +
+                ", temperatureAlarmUpper=" + temperatureAlarmUpper +
+                ", temperatureAlarmLower=" + temperatureAlarmLower +
+                ", temperatureAlarmEnable=" + temperatureAlarmEnable +
+                ", humidityAlarmUpper=" + humidityAlarmUpper +
+                ", humidityAlarmLower=" + humidityAlarmLower +
+                ", humidityAlarmEnable=" + humidityAlarmEnable +
                 ", PM2d5AlarmUpper=" + PM2d5AlarmUpper +
                 ", PM2d5AlarmLower=" + PM2d5AlarmLower +
                 ", PM2d5AlarmEnable=" + PM2d5AlarmEnable +
                 ", phoneNumber='" + phoneNumber + '\'' +
-                ", LastOnLineDate=" + LastOnLineDate +
-                ", LastOffLineDate=" + LastOffLineDate +
-                ", DeviceCreateDate=" + DeviceCreateDate +
+                ", lastOnLineDate=" + lastOnLineDate +
+                ", lastOffLineDate=" + lastOffLineDate +
+                ", deviceCreateDate=" + deviceCreateDate +
                 '}';
     }
 
+    ///////////////
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public String getDeviceAddr() {
+        return deviceAddr;
+    }
+
+    public void setDeviceAddr(String deviceAddr) {
+        this.deviceAddr = deviceAddr;
+    }
+
     public Float getLongitude() {
-        return Longitude;
+        return longitude;
     }
 
     public void setLongitude(Float longitude) {
-        Longitude = longitude;
+        this.longitude = longitude;
     }
 
     public Float getLatitude() {
@@ -85,84 +121,52 @@ public class WSDeviceBean extends WSBaseBean implements Serializable {
         this.altitude = altitude;
     }
 
-    public String getDeviceType() {
-        return DeviceType;
-    }
-
-    public void setDeviceType(String deviceType) {
-        DeviceType = deviceType;
-    }
-
-    public String getDeviceId() {
-        return DeviceId;
-    }
-
-    public void setDeviceId(String deviceId) {
-        DeviceId = deviceId;
-    }
-
-    public String getDeviceName() {
-        return DeviceName;
-    }
-
-    public void setDeviceName(String deviceName) {
-        DeviceName = deviceName;
-    }
-
-    public String getDeviceAddr() {
-        return DeviceAddr;
-    }
-
-    public void setDeviceAddr(String deviceAddr) {
-        DeviceAddr = deviceAddr;
-    }
-
     public Integer getTemperatureAlarmUpper() {
-        return TemperatureAlarmUpper;
+        return temperatureAlarmUpper;
     }
 
     public void setTemperatureAlarmUpper(Integer temperatureAlarmUpper) {
-        TemperatureAlarmUpper = temperatureAlarmUpper;
+        this.temperatureAlarmUpper = temperatureAlarmUpper;
     }
 
     public Integer getTemperatureAlarmLower() {
-        return TemperatureAlarmLower;
+        return temperatureAlarmLower;
     }
 
     public void setTemperatureAlarmLower(Integer temperatureAlarmLower) {
-        TemperatureAlarmLower = temperatureAlarmLower;
+        this.temperatureAlarmLower = temperatureAlarmLower;
     }
 
     public Boolean getTemperatureAlarmEnable() {
-        return TemperatureAlarmEnable;
+        return temperatureAlarmEnable;
     }
 
     public void setTemperatureAlarmEnable(Boolean temperatureAlarmEnable) {
-        TemperatureAlarmEnable = temperatureAlarmEnable;
+        this.temperatureAlarmEnable = temperatureAlarmEnable;
     }
 
     public Integer getHumidityAlarmUpper() {
-        return HumidityAlarmUpper;
+        return humidityAlarmUpper;
     }
 
     public void setHumidityAlarmUpper(Integer humidityAlarmUpper) {
-        HumidityAlarmUpper = humidityAlarmUpper;
+        this.humidityAlarmUpper = humidityAlarmUpper;
     }
 
     public Integer getHumidityAlarmLower() {
-        return HumidityAlarmLower;
+        return humidityAlarmLower;
     }
 
     public void setHumidityAlarmLower(Integer humidityAlarmLower) {
-        HumidityAlarmLower = humidityAlarmLower;
+        this.humidityAlarmLower = humidityAlarmLower;
     }
 
     public Boolean getHumidityAlarmEnable() {
-        return HumidityAlarmEnable;
+        return humidityAlarmEnable;
     }
 
     public void setHumidityAlarmEnable(Boolean humidityAlarmEnable) {
-        HumidityAlarmEnable = humidityAlarmEnable;
+        this.humidityAlarmEnable = humidityAlarmEnable;
     }
 
     public Integer getPM2d5AlarmUpper() {
@@ -198,26 +202,26 @@ public class WSDeviceBean extends WSBaseBean implements Serializable {
     }
 
     public Date getLastOnLineDate() {
-        return LastOnLineDate;
+        return lastOnLineDate;
     }
 
     public void setLastOnLineDate(Date lastOnLineDate) {
-        LastOnLineDate = lastOnLineDate;
+        this.lastOnLineDate = lastOnLineDate;
     }
 
     public Date getLastOffLineDate() {
-        return LastOffLineDate;
+        return lastOffLineDate;
     }
 
     public void setLastOffLineDate(Date lastOffLineDate) {
-        LastOffLineDate = lastOffLineDate;
+        this.lastOffLineDate = lastOffLineDate;
     }
 
     public Date getDeviceCreateDate() {
-        return DeviceCreateDate;
+        return deviceCreateDate;
     }
 
     public void setDeviceCreateDate(Date deviceCreateDate) {
-        DeviceCreateDate = deviceCreateDate;
+        this.deviceCreateDate = deviceCreateDate;
     }
 }

@@ -14,72 +14,56 @@ import java.util.Map;
 /**
  * Created by admin on 2017/6/15.
  */
-public class UserInfoBean extends Document implements Serializable {
+public class UserInfoBean implements Serializable {
 
-    private String UserId;
-    private String UserName;
-    private String LoginName;
-    private String LoginPassword;
+    private String userId;
+    private String userName;
+    private String loginName;
+    private String loginPassword;
 
-    private List<UserOwnDeviceBean> OwnDevicelist;
+    private List<String> ownDeviceList;
 
-    @Override
-    public <TDocument> BsonDocument toBsonDocument(Class<TDocument> documentClass, CodecRegistry codecRegistry) {
-        return new BsonDocumentWrapper<UserInfoBean>(this, codecRegistry.get(UserInfoBean.class));
-    }
+
 
     /////////////////////////////////
-    // 以下都是获取和设置字段值
-    public ObjectId getId() {
-        return this.getObjectId("_id");
-    }
-
-    public void setId(ObjectId id) {
-        this.append("_id", id);
-    }
 
     public String getUserId() {
-        return UserId;
+        return userId;
     }
 
     public void setUserId(String userId) {
-        UserId = userId;
-        this.append("UserId", userId);
+        this.userId = userId;
     }
 
     public String getUserName() {
-        return UserName;
+        return userName;
     }
 
     public void setUserName(String userName) {
-        UserName = userName;
-        this.append("UserName", userName);
+        this.userName = userName;
     }
 
     public String getLoginName() {
-        return LoginName;
+        return loginName;
     }
 
     public void setLoginName(String loginName) {
-        LoginName = loginName;
-        this.append("LoginName", loginName);
+        this.loginName = loginName;
     }
 
     public String getLoginPassword() {
-        return LoginPassword;
+        return loginPassword;
     }
 
     public void setLoginPassword(String loginPassword) {
-        LoginPassword = loginPassword;
-        this.append("LoginPassword", loginPassword);
+        this.loginPassword = loginPassword;
     }
 
-    public List<UserOwnDeviceBean> getOwnDevicelist() {
-        return OwnDevicelist;
+    public List<String> getOwnDeviceList() {
+        return ownDeviceList;
     }
 
-    public void setOwnDevicelist(List<UserOwnDeviceBean> ownDevicelist) {
-        OwnDevicelist = ownDevicelist;
-        this.append("OwnDevicelist", ownDevicelist);
+    public void setOwnDeviceList(List<String> ownDeviceList) {
+        this.ownDeviceList = ownDeviceList;
     }
 }
