@@ -8,10 +8,10 @@ import java.util.Date;
  */
 public class WSRecordBean extends WSBaseBean implements Serializable {
 
-    private String deviceId;
-    private String deviceType;
+    public String deviceId;
+    public String deviceType;
 
-    private Date recordCreateDate;
+    public Date recordCreateDate;
 
     public String getDeviceId() {
         return deviceId;

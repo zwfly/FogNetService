@@ -106,7 +106,6 @@ public class ServletQueryDevices extends HttpServlet {
                         try {
                             MongoUtil.dbObject2Bean(mcDevice.next(), bean);
 
-
                             list.add(bean);
                         } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                             e.printStackTrace();
@@ -129,7 +128,7 @@ public class ServletQueryDevices extends HttpServlet {
                 System.out.println("map1  " + new Gson().toJson(map1));
 
             }
-            System.out.println("mapList  " + new Gson().toJson(mapList));
+//            System.out.println("mapList  " + new Gson().toJson(mapList));
 
             for (Map<String, Object> aMapList : mapList) {
                 WSRecordBean recordBean = new WSRecordBean();
@@ -138,36 +137,41 @@ public class ServletQueryDevices extends HttpServlet {
                 MongoCursor<Document> mcRecord = null;
                 try {
                     mcRecord = MongoDB_WSLink.getWsRecordCollection()
-                            .find(bean2DBObject(recordBean)).sort(new Document("recordCreateDate", 1)).iterator();
+                            .find(bean2DBObject(recordBean)).sort(new Document("recordCreateDate", -1)).limit(1).iterator();
                 } catch (IllegalAccessException e) {
                     e.printStackTrace();
                 }
                 if (mcRecord != null) {
-                    Map<String, String> map3 = new HashMap<>();
+                    Map<String, Object> map3 = new HashMap<>();
                     List<WSRecordBean> wsRecordBeanList = new ArrayList<>();
                     while (mcRecord.hasNext()) {
                         WSRecordBean bean = new WSRecordBean();
+                        Document document = mcRecord.next();
+
+                        System.out.println("document: " + document.toJson());
+
                         try {
-                            MongoUtil.dbObject2Bean(mcRecord.next(), bean);
+                            MongoUtil.dbObject2Bean(document, bean);
                             wsRecordBeanList.add(bean);
                         } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                             e.printStackTrace();
                         }
                     }
-                    try {
-                        if (wsRecordBeanList.size() > 0) {
-                            BeanUtils.populate(wsRecordBeanList.get(wsRecordBeanList.size() - 1), map3);
-                            aMapList.putAll(map3);
-                        }
-                    } catch (IllegalAccessException | InvocationTargetException e) {
-                        e.printStackTrace();
+
+                    System.out.println("record size: " + wsRecordBeanList.size());
+                    if (wsRecordBeanList.size() > 0) {
+//                            BeanUtils.populate(wsRecordBeanList.get(wsRecordBeanList.size() - 1), map3);
+                        System.out.println("record1: " + new Gson().toJson(wsRecordBeanList.get(0)));
+                        map3 = BeanMapConvertUtils.bean2Map(wsRecordBeanList.get(0));
+                        aMapList.putAll(map3);
+                        System.out.println("map3: " + new Gson().toJson(map3));
                     }
+
+                    System.out.println("list1  " + new Gson().toJson(wsRecordBeanList));
 
                 }
             }
 
-
-            System.out.println("list1  " + new Gson().toJson(mapList));
 
         } else {
 
@@ -177,7 +181,7 @@ public class ServletQueryDevices extends HttpServlet {
 
         out.print(new Gson().toJson(map));
         out.flush();
-        System.out.println("out list" + new Gson().toJson(map));
+        System.out.println("out list: " + new Gson().toJson(map));
 
         System.out.println("ServletMyDevices doPost flush");
 

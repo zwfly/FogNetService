@@ -9,33 +9,33 @@ import java.util.Date;
  */
 public class WSDeviceBean extends WSBaseBean implements Serializable {
 
-    private String deviceId;
-    private String deviceType;
-    private String deviceName;
-    private String deviceAddr;
+    public String deviceId;
+    public String deviceType;
+    public String deviceName;
+    public String deviceAddr;
 
-    private Float longitude;   //经度
-    private Float latitude;    //纬度
-    private Integer altitude;    //海拔
+    public Float longitude;   //经度
+    public Float latitude;    //纬度
+    public Integer altitude;    //海拔
 
-    private Integer temperatureAlarmUpper;
-    private Integer temperatureAlarmLower;
-    private Boolean temperatureAlarmEnable;
+    public Integer temperatureAlarmUpper;
+    public Integer temperatureAlarmLower;
+    public Boolean temperatureAlarmEnable;
 
-    private Integer humidityAlarmUpper;
-    private Integer humidityAlarmLower;
-    private Boolean humidityAlarmEnable;
+    public Integer humidityAlarmUpper;
+    public Integer humidityAlarmLower;
+    public Boolean humidityAlarmEnable;
 
-    private Integer PM2d5AlarmUpper;
-    private Integer PM2d5AlarmLower;
-    private Boolean PM2d5AlarmEnable;
+    public Integer PM2d5AlarmUpper;
+    public Integer PM2d5AlarmLower;
+    public Boolean PM2d5AlarmEnable;
 
-    private String phoneNumber;
+    public String phoneNumber;
 
-    private Date lastOnLineDate;
-    private Date lastOffLineDate;
+    public Date lastOnLineDate;
+    public Date lastOffLineDate;
 
-    private Date deviceCreateDate;
+    public Date deviceCreateDate;
 
 
     @Override

@@ -66,12 +66,11 @@ public class MongoDB_WSLink {
     }
 
     public static void insert(WSRecordBean bean) {
-        Document document = new Document();
         try {
-//            Document dbObject = bean2DBObject(bean);
-            BeanUtils.copyProperties(document, bean);
+            Document  document = bean2DBObject(bean);
+//            BeanUtils.copyProperties(document, bean);
             wsRecordCollection.insertOne(document);
-        } catch (IllegalAccessException | InvocationTargetException e) {
+        } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
@@ -82,7 +81,6 @@ public class MongoDB_WSLink {
             Document document = bean2DBObject(bean);
 //            BeanUtils.copyProperties(document, bean);
             wsDeviceCollection.insertOne(document);
-            System.out.println("insert " + document.toJson());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

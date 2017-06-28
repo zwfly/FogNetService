@@ -36,8 +36,10 @@ public class MongoUtil {
             return null;
         }
         Document dbObject = new Document();
+
         // 获取对象对应类中的所有属性域
-        Field[] fields = bean.getClass().getDeclaredFields();
+//            Field[] fields = bean.getClass().getDeclaredFields();
+        Field[] fields = bean.getClass().getFields();
         for (Field field : fields) {
             // 获取属性名
             String varName = field.getName();
@@ -77,6 +79,7 @@ public class MongoUtil {
             // 恢复访问控制权限
             field.setAccessible(accessFlag);
         }
+
         return dbObject;
     }
 
@@ -95,7 +98,7 @@ public class MongoUtil {
         if (bean == null) {
             return null;
         }
-        Field[] fields = bean.getClass().getDeclaredFields();
+        Field[] fields = bean.getClass().getFields();
         for (Field field : fields) {
             String varName = field.getName();
             Object object = dbObject.get(varName);

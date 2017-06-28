@@ -219,8 +219,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
                 int index = 2;
                 int windSpeed = pack.getData()[index++] & 0xFF;
                 windSpeed |= (pack.getData()[index++] & 0xFF) << 8;
-                Float ws = (float) (windSpeed / 100);
-                wsRecordBean.setWindSpeed(ws);
+                wsRecordBean.setWindSpeed((double) (windSpeed / 100));
 
                 int windDirection = pack.getData()[index++] & 0xFF;
                 windDirection |= (pack.getData()[index++] & 0xFF) << 8;
@@ -253,11 +252,12 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
                 short temperature = (short) (pack.getData()[index++] & 0xFF);
                 temperature |= ((short) (pack.getData()[index++] & 0xFF)) << 8;
-                wsRecordBean.setTemperature((int) temperature);
+
+                wsRecordBean.setTemperature((double) temperature / 10.0);
 
                 int humidity = pack.getData()[index++] & 0xFF;
                 humidity |= (pack.getData()[index++] & 0xFF) << 8;
-                wsRecordBean.setHumidity(humidity);
+                wsRecordBean.setHumidity((double) humidity / 10.0f);
 
                 index++;
                 index++;  //跳过 airPressure
