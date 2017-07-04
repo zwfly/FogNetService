@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.InsertOneOptions;
 import com.yrsd.fognet.device.access.user.entity.UserInfoBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSDeviceBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSRecordBean;

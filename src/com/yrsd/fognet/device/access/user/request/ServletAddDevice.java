@@ -23,7 +23,7 @@ import java.util.*;
 /**
  * Created by admin on 2017/6/26.
  */
-@WebServlet(name = "ServletAddDevice", urlPatterns = "/yurunsd/user/device/add")
+@WebServlet(name = "ServletAddDevice", urlPatterns = "/user/device/add")
 public class ServletAddDevice extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("ServletAddDevice doPost");

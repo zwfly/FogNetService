@@ -36,7 +36,7 @@ import static com.yrsd.fognet.MongoUtil.bean2DBObject;
 /**
  * Created by admin on 2017/6/24.
  */
-@WebServlet(name = "ServletQueryDevices", urlPatterns = "/yurunsd/user/devices/query")
+@WebServlet(name = "ServletQueryDevices", urlPatterns = "/user/device/item")
 public class ServletQueryDevices extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("ServletQueryDevices doPost");

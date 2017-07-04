@@ -29,7 +29,7 @@ public class ServerInitializer extends ChannelInitializer<SocketChannel> {
 //        pipeline.addLast("decoder", new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0,
 //                4, 0, 4));
 //        pipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
-        pipeline.addLast("idle", new IdleStateHandler(60, 0, 0, TimeUnit.SECONDS));
+        pipeline.addLast("idle", new IdleStateHandler(3 * 60, 0, 0, TimeUnit.SECONDS));
         // 自己的逻辑Handler
         pipeline.addLast("myhandler", new ServerHandler());
     }

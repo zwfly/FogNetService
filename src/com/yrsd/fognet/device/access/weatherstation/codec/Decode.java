@@ -5,6 +5,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.ByteToMessageDecoder;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -51,6 +52,7 @@ public class Decode extends ByteToMessageDecoder {
                 for (int i = 0; i < 12; i++) {
                     deviceId.append(Integer.toHexString(req[index++] & 0xFF));
                 }
+                String deviceType = String.valueOf(req[index++] & 0xFF);
                 in.resetReaderIndex();
                 int l = in.readableBytes();
                 if (l < (length + 8)) {

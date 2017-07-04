@@ -16,12 +16,12 @@ import java.util.Map;
  */
 public class UserInfoBean implements Serializable {
 
-    private String userId;
-    private String userName;
-    private String loginName;
-    private String loginPassword;
+    public String userId;
+    public String userName;
+    public String loginName;
+    public String loginPassword;
 
-    private List<String> ownDeviceList;
+    public List<String> ownDeviceList;
 
 
 

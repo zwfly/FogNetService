@@ -6,11 +6,11 @@ import java.util.Arrays;
  * Created by admin on 2017/6/15.
  */
 public class WSPackage {
-    private int length;
-    private int cmd;
-    private String deviceId;
-
-    private byte[] data;
+    public Integer length;
+    public Integer cmd;
+    public String deviceId;
+    public String deviceType;
+    public byte[] data;
 
     @Override
     public String toString() {
@@ -20,6 +20,14 @@ public class WSPackage {
                 ", deviceId='" + deviceId + '\'' +
                 ", data=" + Arrays.toString(data) +
                 '}';
+    }
+
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
     }
 
     public int getLength() {

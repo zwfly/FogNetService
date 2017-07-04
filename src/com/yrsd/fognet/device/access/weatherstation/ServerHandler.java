@@ -3,6 +3,7 @@ package com.yrsd.fognet.device.access.weatherstation;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.UpdateOptions;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSDeviceBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSRecordBean;
 import io.netty.buffer.ByteBuf;
@@ -37,7 +38,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
 
         System.out.println("RamoteAddress : " + ctx.channel().remoteAddress() + " active !");
-        System.out.println("ctx id : " + ctx.channel().id().asShortText());
+//        System.out.println("ctx id : " + ctx.channel().id().asShortText());
 
         super.channelActive(ctx);
     }
@@ -50,6 +51,12 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
                 String did = ChannelService.getId(ctx.channel());
                 if (did != null) {
+
+                    MongoDB_WSLink.getWsDeviceCollection().updateMany(Filters.eq("deviceId", did),
+                            new Document("$set", new Document("lastOffLineDate", new Date())));
+
+/*
+
                     WSDeviceBean wsDeviceBean = new WSDeviceBean();
                     wsDeviceBean.setDeviceId(did);
                     MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(wsDeviceBean);
@@ -59,7 +66,8 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
                             mongoCollection.updateOne(Filters.eq("DeviceId", did),
                                     new Document("$set", new Document("LastOffLineDate", new Date())));
                         }
-                    }
+                    }*/
+
                 }
 
 
@@ -106,14 +114,14 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelReadComplete(ChannelHandlerContext ctx) throws Exception {
         super.channelReadComplete(ctx);
-        System.out.println("ctx channelReadComplete  ");
+//        System.out.println("ctx channelReadComplete  ");
     }
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
 //        super.channelRead(ctx, msg);
 
-        System.out.println("ctx channelRead  ");
+//        System.out.println("ctx channelRead  ");
 
         ByteBuf byteBuf = (ByteBuf) msg;
         byte[] result = new byte[byteBuf.readableBytes()];
@@ -138,12 +146,14 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             }
             deviceId.append(s);
         }
-        byte[] bytes = new byte[length - 14];
-        System.arraycopy(result, 20, bytes, 0, length - 14);
+        String deviceType = String.valueOf(result[index++] & 0xFF);
+        byte[] bytes = new byte[length - 15];
+        System.arraycopy(result, index, bytes, 0, bytes.length);
 
         wsPackage.setLength(length);
         wsPackage.setCmd(cmd);
         wsPackage.setDeviceId(String.valueOf(deviceId));
+        wsPackage.setDeviceType(deviceType);
         wsPackage.setData(bytes);
         weatherStation_pro(ctx, wsPackage);
 
@@ -161,16 +171,20 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             String did = null;
             did = ChannelService.getId(ctx.channel());
             if (did != null) {
-                WSDeviceBean wsDeviceBean = new WSDeviceBean();
-                wsDeviceBean.setDeviceId(did);
-                MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(wsDeviceBean);
-                while (mongoCursor.hasNext()) {
-                    if (null != mongoCursor.next().get("DeviceId")) {
-                        MongoCollection mongoCollection = MongoDB_WSLink.getWsDeviceCollection();
-                        mongoCollection.updateOne(Filters.eq("DeviceId", did),
-                                new Document("$set", new Document("LastOffLineDate", new Date())));
-                    }
-                }
+//                WSDeviceBean wsDeviceBean = new WSDeviceBean();
+//                wsDeviceBean.setDeviceId(did);
+
+                MongoDB_WSLink.getWsDeviceCollection().updateMany(Filters.eq("deviceId", did),
+                        new Document("$set", new Document("lastOffLineDate", new Date())));
+
+//                MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(wsDeviceBean);
+//                while (mongoCursor.hasNext()) {
+//                    if (null != mongoCursor.next().get("DeviceId")) {
+//                        MongoCollection mongoCollection = MongoDB_WSLink.getWsDeviceCollection();
+//                        mongoCollection.updateOne(Filters.eq("DeviceId", did),
+//                                new Document("$set", new Document("LastOffLineDate", new Date())));
+//                    }
+//                }
             }
 
             System.out.println("did = " + did);
@@ -186,26 +200,45 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             wsDeviceBean.setDeviceId(pack.getDeviceId());
 
             MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(wsDeviceBean);
+            if (mongoCursor.hasNext()) {
+                MongoDB_WSLink.getWsDeviceCollection().updateMany(Filters.eq("deviceId", pack.getDeviceId()),
+                        new Document("$set", new Document("lastOnLineDate", new Date())
+                                .append("deviceType", pack.getDeviceType())));
+            } else {
+                MongoDB_WSLink.getWsDeviceCollection().updateMany(Filters.eq("deviceId", pack.getDeviceId()),
+                        new Document("$set", new Document("lastOnLineDate", new Date())
+                                .append("deviceType", pack.getDeviceType())
+                                .append("deviceCreateDate", new Date()))
+                        , new UpdateOptions().upsert(true));
+            }
+
+/*
+            WSDeviceBean wsDeviceBean = new WSDeviceBean();
+            wsDeviceBean.setDeviceId(pack.getDeviceId());
+
+            MongoCursor<Document> mongoCursor = MongoDB_WSLink.find(wsDeviceBean);
 
             if (mongoCursor.hasNext()) {
                 if (null != mongoCursor.next().get("DeviceId")) {
                     MongoCollection mongoCollection = MongoDB_WSLink.getWsDeviceCollection();
                     mongoCollection.updateOne(Filters.eq("DeviceId", pack.getDeviceId()),
-                            new Document("$set", new Document("LastOnLineDate", new Date())));
+                            new Document("$set", new Document("lastOnLineDate", new Date())));
                 } else {
+                    wsDeviceBean.setDeviceType(pack.getDeviceType());
                     wsDeviceBean.setDeviceCreateDate(new Date());
                     wsDeviceBean.setLastOnLineDate(new Date());
                     MongoDB_WSLink.insert(wsDeviceBean);
                 }
                 System.out.println("weatherStation_pro  hasNext");
             } else {
+                wsDeviceBean.setDeviceType(pack.getDeviceType());
                 wsDeviceBean.setDeviceCreateDate(new Date());
                 wsDeviceBean.setLastOnLineDate(new Date());
                 MongoDB_WSLink.insert(wsDeviceBean);
                 System.out.println("weatherStation_pro else hasNext");
             }
             System.out.println("weatherStation_pro  null");
-
+*/
         }
 
         switch (pack.getCmd()) {
@@ -214,12 +247,13 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
             case 0x000112:  //只包含传感器信息的心跳命令
                 WSRecordBean wsRecordBean = new WSRecordBean();
                 wsRecordBean.setDeviceId(pack.getDeviceId());
+                wsRecordBean.setDeviceType(pack.getDeviceType());
                 wsRecordBean.setRecordCreateDate(new Date());
 
                 int index = 2;
                 int windSpeed = pack.getData()[index++] & 0xFF;
                 windSpeed |= (pack.getData()[index++] & 0xFF) << 8;
-                wsRecordBean.setWindSpeed((double) (windSpeed / 100));
+                wsRecordBean.setWindSpeed((double) windSpeed / 100.0);
 
                 int windDirection = pack.getData()[index++] & 0xFF;
                 windDirection |= (pack.getData()[index++] & 0xFF) << 8;
@@ -257,7 +291,7 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
                 int humidity = pack.getData()[index++] & 0xFF;
                 humidity |= (pack.getData()[index++] & 0xFF) << 8;
-                wsRecordBean.setHumidity((double) humidity / 10.0f);
+                wsRecordBean.setHumidity((double) humidity / 10.0);
 
                 index++;
                 index++;  //跳过 airPressure
@@ -268,31 +302,32 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
 
                 int pm10 = pack.getData()[index++] & 0xFF;
                 pm10 |= (pack.getData()[index++] & 0xFF) << 8;
-                wsRecordBean.setPM2d5(pm10);
+                wsRecordBean.setPM10(pm10);
 
                 for (int i = 0; i < 8; i++) {
                     if (((pack.getData()[1] & 0xFF) & (1 << i)) == 0) {
                         switch (i) {
-                            case 0:  //CO2
+                            case 7:  //CO2
+
                                 break;
-                            case 1:  //pm10
+                            case 6:  //pm10
                                 wsRecordBean.setPM10(null);
                                 break;
-                            case 2:  //pm2.5
+                            case 5:  //pm2.5
                                 wsRecordBean.setPM2d5(null);
                                 break;
-                            case 3: //airPressure
+                            case 4: //airPressure
                                 break;
-                            case 4:  //humidity
+                            case 3:  //humidity
                                 wsRecordBean.setHumidity(null);
                                 break;
-                            case 5:  //temperature
-//                                wsRecordBean.setTemperature(null);
+                            case 2:  //temperature
+                                wsRecordBean.setTemperature(null);
                                 break;
-                            case 6:  //windDirection
+                            case 1:  //windDirection
                                 wsRecordBean.setWindDirection(null);
                                 break;
-                            case 7:  //windSpeed
+                            case 0:  //windSpeed
                                 wsRecordBean.setWindSpeed(null);
                                 break;
                             default:
@@ -301,7 +336,6 @@ public class ServerHandler extends ChannelInboundHandlerAdapter {
                     }
                 }
                 MongoDB_WSLink.insert(wsRecordBean);
-//                System.out.println("wsRecordBean " + wsRecordBean.toString());
                 break;
             default:
                 break;

@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Created by admin on 2017/6/21.
  */
-@WebServlet(name = "ServletLogin", urlPatterns = "/yurunsd/user/login")
+@WebServlet(name = "ServletLogin", urlPatterns = "/user/login")
 public class ServletLogin extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("login doPost");

@@ -23,7 +23,7 @@ import java.util.Map;
 /**
  * Created by admin on 2017/6/21.
  */
-@WebServlet(name = "ServletRegister", urlPatterns = "/yurunsd/user/register")
+@WebServlet(name = "ServletRegister", urlPatterns = "/user/register")
 public class ServletRegister extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         System.out.println("Register doPost");

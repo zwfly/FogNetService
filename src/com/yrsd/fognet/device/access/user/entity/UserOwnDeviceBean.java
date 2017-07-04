@@ -7,8 +7,8 @@ import java.io.Serializable;
  */
 public class UserOwnDeviceBean implements Serializable {
 
-    private String deviceId;
-    private Integer deviceType;
+    public String deviceId;
+    public Integer deviceType;
 
     public String getDeviceId() {
         return deviceId;

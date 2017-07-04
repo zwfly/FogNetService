@@ -14,6 +14,19 @@ public class WSBaseBean implements Serializable {
     public Integer PM2d5;
     public Integer PM10;
 
+
+    @Override
+    public String toString() {
+        return "WSBaseBean{" +
+                "windSpeed=" + windSpeed +
+                ", windDirection='" + windDirection + '\'' +
+                ", temperature=" + temperature +
+                ", humidity=" + humidity +
+                ", PM2d5=" + PM2d5 +
+                ", PM10=" + PM10 +
+                '}';
+    }
+
     public Double getWindSpeed() {
         return windSpeed;
     }

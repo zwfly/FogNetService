@@ -13,6 +13,22 @@ public class WSRecordBean extends WSBaseBean implements Serializable {
 
     public Date recordCreateDate;
 
+
+    @Override
+    public String toString() {
+        return "WSRecordBean{" +
+                "windSpeed=" + windSpeed +
+                ", windDirection='" + windDirection + '\'' +
+                ", deviceId='" + deviceId + '\'' +
+                ", temperature=" + temperature +
+                ", deviceType='" + deviceType + '\'' +
+                ", humidity=" + humidity +
+                ", recordCreateDate=" + recordCreateDate +
+                ", PM2d5=" + PM2d5 +
+                ", PM10=" + PM10 +
+                '}';
+    }
+
     public String getDeviceId() {
         return deviceId;
     }
