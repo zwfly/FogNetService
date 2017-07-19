@@ -1,4 +1,4 @@
-package com.yrsd.fognet.device.access.user.entity;
+package com.yrsd.fognet.user.entity;
 
 import java.io.Serializable;
 

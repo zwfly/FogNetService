@@ -9,6 +9,7 @@ public class WSPackage {
     public Integer length;
     public Integer cmd;
     public String deviceId;
+    public String toWho;
     public String deviceType;
     public byte[] data;
 
@@ -22,6 +23,14 @@ public class WSPackage {
                 '}';
     }
 
+    public String getToWho() {
+        return toWho;
+    }
+
+    public void setToWho(String toWho) {
+        this.toWho = toWho;
+    }
+
     public String getDeviceType() {
         return deviceType;
     }
@@ -30,19 +39,19 @@ public class WSPackage {
         this.deviceType = deviceType;
     }
 
-    public int getLength() {
+    public Integer getLength() {
         return length;
     }
 
-    public void setLength(int length) {
+    public void setLength(Integer length) {
         this.length = length;
     }
 
-    public int getCmd() {
+    public Integer getCmd() {
         return cmd;
     }
 
-    public void setCmd(int cmd) {
+    public void setCmd(Integer cmd) {
         this.cmd = cmd;
     }
 

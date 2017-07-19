@@ -1,20 +1,13 @@
-package com.yrsd.fognet.device.access.user.request;
+package com.yrsd.fognet.user.request;
 
 import com.google.gson.Gson;
-import com.mongodb.BasicDBObject;
-import com.mongodb.Cursor;
-import com.mongodb.DBCursor;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.ListCollectionsIterable;
 import com.mongodb.client.MongoCursor;
 import com.yrsd.fognet.MongoUtil;
-import com.yrsd.fognet.device.access.user.entity.UserInfoBean;
-import com.yrsd.fognet.device.access.user.entity.UserOwnDeviceBean;
+import com.yrsd.fognet.user.entity.UserInfoBean;
 import com.yrsd.fognet.device.access.weatherstation.MongoDB_WSLink;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSDeviceBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSRecordBean;
 import com.yrsd.fognet.utils.BeanMapConvertUtils;
-import org.apache.commons.beanutils.BeanUtils;
 import org.bson.Document;
 
 import javax.servlet.ServletException;

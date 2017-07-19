@@ -1,7 +1,7 @@
-package com.yrsd.fognet.device.access.user.request;
+package com.yrsd.fognet.user.request;
 
 import com.mongodb.client.MongoCursor;
-import com.yrsd.fognet.device.access.user.entity.UserInfoBean;
+import com.yrsd.fognet.user.entity.UserInfoBean;
 import com.yrsd.fognet.device.access.weatherstation.MongoDB_WSLink;
 import org.bson.Document;
 

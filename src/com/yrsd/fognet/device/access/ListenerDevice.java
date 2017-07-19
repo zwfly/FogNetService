@@ -4,6 +4,7 @@ package com.yrsd.fognet.device.access; /**
 
 import com.yrsd.fognet.device.access.weatherstation.MongoDB_WSLink;
 import com.yrsd.fognet.device.access.weatherstation.WSNettyServer;
+import com.yrsd.fognet.device.tcp2mq.MqttTransmit;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -14,7 +15,8 @@ import java.util.logging.Logger;
 @WebListener()
 public class ListenerDevice implements ServletContextListener {
 
-    WSNettyServer wsNettyServer = null;
+    private WSNettyServer wsNettyServer = null;
+    private static MqttTransmit mqttTransmit = null;
 
     // Public constructor is required by servlet spec
     public ListenerDevice() {
@@ -25,7 +27,7 @@ public class ListenerDevice implements ServletContextListener {
     // -------------------------------------------------------
     public void contextInitialized(ServletContextEvent sce) {
 
-        System.out.println("ListenerDevice contextInitialized... " );
+        System.out.println("ListenerDevice contextInitialized... ");
 
         Logger log = Logger.getLogger("org.mongodb.driver");
         log.setLevel(Level.OFF);
@@ -47,19 +49,39 @@ public class ListenerDevice implements ServletContextListener {
                 }
             }
         }).start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        //////////////
+                mqttTransmit = new MqttTransmit();
 
+                mqttTransmit.start();
+
+            }
+        }).start();
 
     }
 
     public void contextDestroyed(ServletContextEvent sce) {
-        System.out.println("ListenerDevice contextDestroyed... " );
+        System.out.println("ListenerDevice contextDestroyed... ");
 
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                wsNettyServer.stop();
+                MongoDB_WSLink.stop();
+            }
+        }).start();
 
-        wsNettyServer.stop();
-        MongoDB_WSLink.stop();
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                mqttTransmit.destroy();
+            }
+        }).start();
     }
 
+    public static MqttTransmit getMqttTransmit() {
+        return mqttTransmit;
+    }
 }

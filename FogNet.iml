@@ -25,8 +25,9 @@
     <orderEntry type="library" name="netty-all-4.1.11.Final" level="project" />
     <orderEntry type="library" name="commons-lang3-3.5" level="project" />
     <orderEntry type="library" name="commons-beanutils-1.9.3" level="project" />
-    <orderEntry type="library" name="org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.0" level="project" />
+    <orderEntry type="library" name="org.eclipse.paho:org.eclipse.paho.client.mqttv3:1.1.1" level="project" />
     <orderEntry type="library" name="commons-logging-1.2" level="project" />
     <orderEntry type="library" name="commons-collections-3.2.2" level="project" />
+    <orderEntry type="library" name="org.springframework.security:spring-security-core:4.2.3.RELEASE" level="project" />
   </component>
 </module>

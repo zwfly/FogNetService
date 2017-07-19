@@ -1,23 +1,17 @@
 package com.yrsd.fognet.device.access.weatherstation;
 
-import com.mongodb.BasicDBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.client.model.InsertOneOptions;
-import com.yrsd.fognet.device.access.user.entity.UserInfoBean;
+import com.yrsd.fognet.user.entity.UserInfoBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSDeviceBean;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSRecordBean;
-import org.apache.commons.beanutils.BeanUtils;
 import org.bson.Document;
 
-import java.lang.reflect.InvocationTargetException;
-
 import static com.yrsd.fognet.MongoUtil.bean2DBObject;
-import static com.yrsd.fognet.MongoUtil.dbObject2Bean;
 
 /**
  * Created by admin on 2017/6/14.

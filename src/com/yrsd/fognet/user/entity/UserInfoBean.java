@@ -1,15 +1,7 @@
-package com.yrsd.fognet.device.access.user.entity;
-
-import org.bson.BsonDocument;
-import org.bson.BsonDocumentWrapper;
-import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.types.ObjectId;
+package com.yrsd.fognet.user.entity;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by admin on 2017/6/15.
