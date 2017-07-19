@@ -10,6 +10,7 @@ import com.yrsd.fognet.device.access.user.request.UserAuthentication;
 import com.yrsd.fognet.device.access.weatherstation.MongoDB_WSLink;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSRecordBean;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.bson.Document;
 
@@ -114,10 +115,14 @@ public class ServletHistory extends HttpServlet {
                 m.put("humidity", recordBean.getHumidity());
             }
             if (StringUtils.equalsIgnoreCase(PM2d5, "y")) {
-                m.put("PM2d5", recordBean.getPM2d5());
+                if (ObjectUtils.notEqual(null, recordBean.getPM2d5())) {
+                    m.put("PM2d5", recordBean.getPM2d5());
+                }
             }
             if (StringUtils.equalsIgnoreCase(PM10, "y")) {
-                m.put("PM10", recordBean.getPM10());
+                if (ObjectUtils.notEqual(null, recordBean.getPM10())) {
+                    m.put("PM10", recordBean.getPM10());
+                }
             }
             if (StringUtils.equalsIgnoreCase(windSpeed, "y")) {
                 m.put("windSpeed", recordBean.getWindSpeed());
