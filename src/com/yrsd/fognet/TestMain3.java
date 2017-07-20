@@ -7,6 +7,8 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.UpdateOptions;
 import com.yrsd.fognet.device.access.weatherstation.MongoDB_WSLink;
 import com.yrsd.fognet.device.access.weatherstation.entity.WSDeviceBean;
+import com.yrsd.fognet.device.tcp2mq.TransmitBaseBean;
+import com.yrsd.fognet.user.entity.UserInfoBean;
 import org.apache.commons.beanutils.BeanUtils;
 import org.bson.Document;
 
@@ -22,6 +24,29 @@ public class TestMain3 {
 
     public static void main(String[] args) {
 
+//        fun1();
+        fun2();
+
+    }
+
+    private static void fun2() {
+        TransmitBaseBean bean = new TransmitBaseBean();
+        bean.setFrameId("123123");
+        bean.setFromDeviceType("8");
+        bean.setToDeviceType("3");
+        bean.setToId("1234567890");
+
+
+        UserInfoBean userInfoBean = new UserInfoBean();
+        userInfoBean.setUserName("jake");
+        userInfoBean.setLoginPassword("123456");
+
+        bean.setObj(userInfoBean);
+        System.out.println(new Gson().toJson(bean));
+
+    }
+
+    private static void fun1() {
 
         MongoDB_WSLink.start();
 
@@ -47,4 +72,5 @@ public class TestMain3 {
             System.out.println(mongoCursor.next());
         }
     }
+
 }

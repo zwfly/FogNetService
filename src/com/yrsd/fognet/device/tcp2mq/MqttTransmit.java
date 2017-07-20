@@ -1,15 +1,21 @@
 package com.yrsd.fognet.device.tcp2mq;
 
+import com.google.gson.Gson;
 import com.yrsd.fognet.device.access.ListenerDevice;
 import com.yrsd.fognet.device.access.weatherstation.ChannelService;
+import com.yrsd.fognet.user.entity.UserInfoBean;
 import com.yrsd.fognet.utils.Utils;
 import io.netty.channel.Channel;
+import org.apache.commons.beanutils.BeanUtils;
 import org.eclipse.paho.client.mqttv3.*;
 import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
 
+import java.lang.reflect.InvocationTargetException;
+
 public class MqttTransmit {
 
-    private String domain = "localhost";
+    //    private String domain = "localhost";
+    private String domain = "192.168.1.10";
     private String broker = "tcp://" + domain + ":1883";
     private String userName = "admin";
     private String password = "admin";
@@ -44,6 +50,8 @@ public class MqttTransmit {
             client.setCallback(new mMqttCallback(client));
 
             client.connect(connOpts);
+
+            this.subscribe("s123123");
 
         } catch (MqttException me) {
             System.out.println("reason " + me.getReasonCode());
@@ -99,13 +107,36 @@ public class MqttTransmit {
          */
         @Override
         public void messageArrived(final String topic, final MqttMessage msg) {
+            //topic:  手机ID
+
             new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    String s = new String(msg.getPayload());
+                    System.out.println("topic: " + topic);
+                    System.out.println("s: " + s);
 
-                    Channel channel = ChannelService.getChannel(topic);
+                    TransmitBaseBean tBean = null;
+                    try {
+                        tBean = new Gson().fromJson(s, TransmitBaseBean.class);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    if (tBean == null) {
+                        return;
+                    }
+//                    UserInfoBean userInfoBean = new UserInfoBean();
+//                    try {
+//                        BeanUtils.copyProperties(userInfoBean, tBean.getObj());
+//                    } catch (IllegalAccessException | InvocationTargetException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    System.out.println("userInfoBean: " + userInfoBean.getUserName());
+
+                    Channel channel = ChannelService.getChannel(tBean.getToId());
                     if (channel != null) {
-                        channel.writeAndFlush("d");
+                        channel.writeAndFlush(new Gson().toJson(tBean.getObj()));
                     }
                 }
             }).start();
